@@ -140,7 +140,7 @@ function homepage_reviews_shortcode($atts)
         if ($gallery_count > 0) {
             $output .= '<div class="review-gallery gallery-count-' . $gallery_count . '" data-gallery-count="' . $gallery_count . '">';
             foreach ($gallery_images as $img_url) {
-                $output .= '<div class="gallery-item" style="background-image: url(' . esc_url($img_url) . ');"></div>';
+                $output .= '<div class="gallery-item"><img src="' . esc_url($img_url) . '" alt="' . esc_attr(get_the_title()) . '" loading="lazy"></div>';
             }
             $output .= '</div>'; // .review-gallery
         }

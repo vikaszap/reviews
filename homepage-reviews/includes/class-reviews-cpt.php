@@ -120,6 +120,16 @@ class Homepage_Reviews_CPT
         echo '<label for="review_tag">' . __('Review Tag (e.g., Living Room Makeover)', 'homepage-reviews') . '</label>';
         echo '<input type="text" id="review_tag" name="review_tag" value="' . esc_attr($tag) . '" style="width: 100%;" />';
         echo '</p>';
+
+        $verified = get_post_meta($post->ID, '_review_verified', true);
+        $is_verified = ($verified !== 'no'); // Default to checked
+
+        echo '<p>';
+        echo '<label for="review_verified">';
+        echo '<input type="checkbox" id="review_verified" name="review_verified" value="yes" ' . checked($is_verified, true, false) . ' />';
+        echo __('Show Verified Badge', 'homepage-reviews');
+        echo '</label>';
+        echo '</p>';
     }
 
     public function render_gallery_meta_box($post)
@@ -172,6 +182,9 @@ class Homepage_Reviews_CPT
         if (isset($_POST['review_tag'])) {
             update_post_meta($post_id, '_review_tag', sanitize_text_field($_POST['review_tag']));
         }
+
+        $verified = isset($_POST['review_verified']) ? 'yes' : 'no';
+        update_post_meta($post_id, '_review_verified', $verified);
 
         for ($i = 1; $i <= 4; $i++) {
             if (isset($_POST['review_gallery_image_' . $i])) {

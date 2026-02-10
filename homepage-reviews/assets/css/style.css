@@ -1,0 +1,328 @@
+/* ===== Homepage Reviews Slider ===== */
+.homepage-reviews-slider {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 40px 0 10px;
+}
+
+.reviews-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.review-slide {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+/* ===== Left Column: Testimonial Card ===== */
+.review-card {
+    flex: 0 0 400px;
+    padding: 30px 28px;
+    background: #ffffff;
+    border-radius: 16px;
+	box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+/* Card Header: Reviewer Info + Quote Icon */
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.reviewer-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reviewer-image-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+body .reviewer-image {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.verified-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.verified-badge svg {
+    width: 16px;
+    height: 16px;
+}
+
+.reviewer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.reviewer-name {
+    font-weight: 700;
+    font-size: 1em;
+    color: #1a1a1a;
+    line-height: 1.3;
+}
+
+.reviewer-position {
+    font-size: 0.82em;
+    color: #999;
+    line-height: 1.3;
+}
+
+/* Quote Icon */
+.quote-icon {
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+
+.quote-icon svg {
+    width: 44px;
+    height: 44px;
+}
+
+/* Rating Stars */
+.review-rating {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    letter-spacing: 2px;
+    color: #FFB900;
+}
+
+/* Review Content */
+.review-content {
+    font-size: 0.9em;
+    line-height: 1.65;
+    color: #555;
+    margin-bottom: 18px;
+}
+
+/* Review Tag */
+.review-tag {
+    display: inline-block;
+    padding: 5px 14px;
+    background: #EFF6FF;
+    color: #1447E6;
+    font-size: 0.78em;
+    font-weight: 600;
+    border-radius: 20px;
+    margin-top: 4px;
+    width: fit-content;
+}
+button.slider-prev, button.slider-next{
+    box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.10), 0px 10px 15px -3px rgba(0, 0, 0, 0.10);
+}
+/* ===== No Gallery: Card Centered ===== */
+.review-slide.no-gallery-slide {
+    justify-content: center;
+}
+
+.review-slide.no-gallery-slide .review-card {
+    flex: 0 1 560px;
+    max-width: 560px;
+}
+
+/* ===== Right Column: Gallery Grid ===== */
+.review-gallery {
+    flex: 1;
+    max-width: 520px;
+    display: grid;
+    gap: 10px;
+}
+
+.gallery-item {
+    width: 100%;
+    min-height: 180px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+/* 4 images: 2x2 grid */
+.review-gallery.gallery-count-4 {
+    grid-template-columns: 1.15fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+/* 3 images: first image tall on left, 2 stacked on right */
+.review-gallery.gallery-count-3 {
+    grid-template-columns: 1.15fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.review-gallery.gallery-count-3 .gallery-item:first-child {
+    grid-row: 1 / 3;
+}
+
+/* 2 images: side-by-side */
+.review-gallery.gallery-count-2 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+.review-gallery.gallery-count-2 .gallery-item {
+    min-height: 280px;
+}
+
+/* 1 image: single full-width */
+.review-gallery.gallery-count-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.review-gallery.gallery-count-1 .gallery-item {
+    min-height: 370px;
+}
+
+/* ===== Slider Navigation (Prev + Dots + Next) ===== */
+.slider-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 0 8px;
+}
+
+.slider-prev,
+.slider-next {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow 0.2s ease, background 0.2s ease;
+    padding: 0;
+}
+
+.slider-prev:hover,
+.slider-next:hover {
+    background: #f7f7f7;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dots */
+.slider-dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.slider-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d0d0d0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slider-dot.active {
+    width: 28px;
+    border-radius: 5px;
+    background: #0066FF;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+    .review-slide {
+        flex-direction: column;
+        padding: 10px 16px;
+        gap: 20px;
+    }
+
+    .review-card {
+        flex: 1 1 auto;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .review-gallery {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .gallery-item {
+        min-height: 140px;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-card {
+        padding: 20px;
+    }
+
+    .reviewer-image {
+        width: 44px;
+        height: 44px;
+    }
+
+    .quote-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .review-gallery {
+        gap: 8px;
+    }
+
+    /* Mobile gallery adjustments */
+    .gallery-item {
+        min-height: 120px;
+    }
+
+    .review-gallery.gallery-count-3,
+    .review-gallery.gallery-count-4 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .review-gallery.gallery-count-3 .gallery-item:first-child {
+        grid-column: 1 / 3;
+        grid-row: auto;
+    }
+
+    .review-gallery.gallery-count-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .review-gallery.gallery-count-1 .gallery-item {
+        min-height: 200px;
+    }
+}

@@ -20,6 +20,14 @@ function homepage_reviews_shortcode($atts)
     $rating_color = isset($options['rating_color']) ? $options['rating_color'] : '#ffb900';
     $font_size = isset($options['font_size']) ? $options['font_size'] : '16';
     $border_radius = isset($options['border_radius']) ? $options['border_radius'] : '8';
+    $autoplay = isset($options['autoplay']) ? $options['autoplay'] : '0';
+    $autoplay_speed = isset($options['autoplay_speed']) ? intval($options['autoplay_speed']) : 5000;
+
+    // Pass autoplay config to JS
+    wp_localize_script('homepage-reviews-slider', 'homepageReviewsConfig', array(
+        'autoplay' => ($autoplay === '1') ? true : false,
+        'autoplay_speed' => $autoplay_speed,
+    ));
 
     // Query Reviews
     $args = array(

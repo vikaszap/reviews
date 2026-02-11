@@ -79,6 +79,32 @@ class Homepage_Reviews_Settings
             'homepage_reviews_style_section',
             array('field' => 'border_radius', 'default' => '8')
         );
+
+        // Slider Settings Section
+        add_settings_section(
+            'homepage_reviews_slider_section',
+            __('Slider Settings', 'homepage-reviews'),
+            null,
+            'homepage_reviews_settings'
+        );
+
+        add_settings_field(
+            'autoplay',
+            __('Enable Autoplay', 'homepage-reviews'),
+            array($this, 'checkbox_field_callback'),
+            'homepage_reviews_settings',
+            'homepage_reviews_slider_section',
+            array('field' => 'autoplay', 'default' => '0', 'label' => __('Automatically advance slides', 'homepage-reviews'))
+        );
+
+        add_settings_field(
+            'autoplay_speed',
+            __('Autoplay Speed (ms)', 'homepage-reviews'),
+            array($this, 'number_field_callback'),
+            'homepage_reviews_settings',
+            'homepage_reviews_slider_section',
+            array('field' => 'autoplay_speed', 'default' => '5000')
+        );
     }
 
     public function color_picker_callback($args)
@@ -92,7 +118,17 @@ class Homepage_Reviews_Settings
     {
         $options = get_option('homepage_reviews_settings');
         $value = isset($options[$args['field']]) ? $options[$args['field']] : $args['default'];
-        echo '<input type="number" name="homepage_reviews_settings[' . esc_attr($args['field']) . ']" value="' . esc_attr($value) . '" style="width: 60px;"> px';
+        echo '<input type="number" name="homepage_reviews_settings[' . esc_attr($args['field']) . ']" value="' . esc_attr($value) . '" style="width: 80px;">';
+    }
+
+    public function checkbox_field_callback($args)
+    {
+        $options = get_option('homepage_reviews_settings');
+        $value = isset($options[$args['field']]) ? $options[$args['field']] : $args['default'];
+        $checked = ($value === '1') ? 'checked' : '';
+        $label = isset($args['label']) ? $args['label'] : '';
+        echo '<label><input type="hidden" name="homepage_reviews_settings[' . esc_attr($args['field']) . ']" value="0">';
+        echo '<input type="checkbox" name="homepage_reviews_settings[' . esc_attr($args['field']) . ']" value="1" ' . $checked . '> ' . esc_html($label) . '</label>';
     }
 
     public function settings_page_html()
@@ -101,27 +137,27 @@ class Homepage_Reviews_Settings
             return;
         }
         ?>
-        <div class="wrap">
-            <h1>
-                <?php echo esc_html(get_admin_page_title()); ?>
-            </h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields('homepage_reviews_settings');
-                do_settings_sections('homepage_reviews_settings');
-                submit_button('Save Settings');
-                ?>
-            </form>
+                <div class="wrap">
+                    <h1>
+                        <?php echo esc_html(get_admin_page_title()); ?>
+                    </h1>
+                    <form action="options.php" method="post">
+                        <?php
+                        settings_fields('homepage_reviews_settings');
+                        do_settings_sections('homepage_reviews_settings');
+                        submit_button('Save Settings');
+                        ?>
+                    </form>
 
-            <hr>
-            <h2><?php _e('Demo Data', 'homepage-reviews'); ?></h2>
-            <p><?php _e('Import sample reviews to see how the plugin looks.', 'homepage-reviews'); ?></p>
-            <form action="<?php echo admin_url('admin-post.php'); ?>" method="post">
-                <input type="hidden" name="action" value="homepage_reviews_import_demo_data">
-                <?php wp_nonce_field('homepage_reviews_import_demo_data_action', 'homepage_reviews_import_demo_data_nonce'); ?>
-                <?php submit_button(__('Import Demo Reviews', 'homepage-reviews'), 'secondary'); ?>
-            </form>
-        </div>
-        <?php
+                    <hr>
+                    <h2><?php _e('Demo Data', 'homepage-reviews'); ?></h2>
+                    <p><?php _e('Import sample reviews to see how the plugin looks.', 'homepage-reviews'); ?></p>
+                    <form action="<?php echo admin_url('admin-post.php'); ?>" method="post">
+                        <input type="hidden" name="action" value="homepage_reviews_import_demo_data">
+                        <?php wp_nonce_field('homepage_reviews_import_demo_data_action', 'homepage_reviews_import_demo_data_nonce'); ?>
+                        <?php submit_button(__('Import Demo Reviews', 'homepage-reviews'), 'secondary'); ?>
+                    </form>
+                </div>
+                <?php
     }
 }

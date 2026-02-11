@@ -33,7 +33,7 @@ class Homepage_Reviews_CPT
                     'nonce' => wp_create_nonce('homepage_reviews_reorder_nonce')
                 ));
 
-                wp_register_style('homepage-reviews-admin-reorder', false);
+                wp_register_style('homepage-reviews-admin-reorder', false, array(), '1.0.0');
                 wp_enqueue_style('homepage-reviews-admin-reorder');
                 wp_add_inline_style('homepage-reviews-admin-reorder', '.column-sort { width: 40px !important; text-align: center; } .drag-handle { cursor: move; color: #ccc; font-size: 20px; } .drag-handle:hover { color: #666; } .ui-sortable-helper { display: table !important; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }');
             }
@@ -67,7 +67,11 @@ class Homepage_Reviews_CPT
             wp_send_json_error('Unauthorized');
         }
 
-        $order = isset($_POST['order']) ? (array) $_POST['order'] : array();
+        if (isset($_POST['order'])) {
+            $order = array_map('intval', wp_unslash($_POST['order']));
+        } else {
+            $order = array();
+        }
 
         if (empty($order)) {
             wp_send_json_error('No order data');
@@ -182,17 +186,17 @@ class Homepage_Reviews_CPT
         $tag = get_post_meta($post->ID, '_review_tag', true);
 
         echo '<p>';
-        echo '<label for="review_rating">' . __('Rating (1-5)', 'homepage-reviews') . '</label>';
+        echo '<label for="review_rating">' . esc_html__('Rating (1-5)', 'homepage-reviews') . '</label>';
         echo '<input type="number" id="review_rating" name="review_rating" value="' . esc_attr($rating) . '" min="1" max="5" step="0.5" style="width: 100%;" />';
         echo '</p>';
 
         echo '<p>';
-        echo '<label for="reviewer_position">' . __('Reviewer Position/Title', 'homepage-reviews') . '</label>';
+        echo '<label for="reviewer_position">' . esc_html__('Reviewer Position/Title', 'homepage-reviews') . '</label>';
         echo '<input type="text" id="reviewer_position" name="reviewer_position" value="' . esc_attr($position) . '" style="width: 100%;" />';
         echo '</p>';
 
         echo '<p>';
-        echo '<label for="review_tag">' . __('Review Tag (e.g., Living Room Makeover)', 'homepage-reviews') . '</label>';
+        echo '<label for="review_tag">' . esc_html__('Review Tag (e.g., Living Room Makeover)', 'homepage-reviews') . '</label>';
         echo '<input type="text" id="review_tag" name="review_tag" value="' . esc_attr($tag) . '" style="width: 100%;" />';
         echo '</p>';
 
@@ -202,7 +206,7 @@ class Homepage_Reviews_CPT
         echo '<p>';
         echo '<label for="review_verified">';
         echo '<input type="checkbox" id="review_verified" name="review_verified" value="yes" ' . checked($is_verified, true, false) . ' />';
-        echo __('Show Verified Badge', 'homepage-reviews');
+        echo esc_html__('Show Verified Badge', 'homepage-reviews');
         echo '</label>';
         echo '</p>';
     }
@@ -214,16 +218,16 @@ class Homepage_Reviews_CPT
             $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
 
             echo '<div class="gallery-image-wrapper" style="display: inline-block; margin-right: 10px; text-align: center;">';
-            echo '<div class="image-preview-' . $i . '" style="width: 100px; height: 100px; background: #f0f0f0; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">';
+            echo '<div class="image-preview-' . esc_attr($i) . '" style="width: 100px; height: 100px; background: #f0f0f0; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">';
             if ($image_url) {
                 echo '<img src="' . esc_url($image_url) . '" style="max-width: 100%; max-height: 100%;" />';
             } else {
-                echo '<span>' . __('No Image', 'homepage-reviews') . '</span>';
+                echo '<span>' . esc_html__('No Image', 'homepage-reviews') . '</span>';
             }
             echo '</div>';
-            echo '<input type="hidden" name="review_gallery_image_' . $i . '" id="review_gallery_image_' . $i . '" value="' . esc_attr($image_id) . '" />';
-            echo '<button type="button" class="button upload-gallery-image" data-index="' . $i . '">' . __('Select Image', 'homepage-reviews') . '</button>';
-            echo '<button type="button" class="button remove-gallery-image" data-index="' . $i . '" style="margin-top: 5px;">' . __('Remove', 'homepage-reviews') . '</button>';
+            echo '<input type="hidden" name="review_gallery_image_' . esc_attr($i) . '" id="review_gallery_image_' . esc_attr($i) . '" value="' . esc_attr($image_id) . '" />';
+            echo '<button type="button" class="button upload-gallery-image" data-index="' . esc_attr($i) . '">' . esc_html__('Select Image', 'homepage-reviews') . '</button>';
+            echo '<button type="button" class="button remove-gallery-image" data-index="' . esc_attr($i) . '" style="margin-top: 5px;">' . esc_html__('Remove', 'homepage-reviews') . '</button>';
             echo '</div>';
         }
     }
@@ -234,7 +238,7 @@ class Homepage_Reviews_CPT
             return;
         }
 
-        if (!wp_verify_nonce($_POST['homepage_reviews_meta_box_nonce'], 'homepage_reviews_save_meta_box_data')) {
+        if (!wp_verify_nonce(sanitize_key($_POST['homepage_reviews_meta_box_nonce']), 'homepage_reviews_save_meta_box_data')) {
             return;
         }
 
@@ -247,15 +251,15 @@ class Homepage_Reviews_CPT
         }
 
         if (isset($_POST['review_rating'])) {
-            update_post_meta($post_id, '_review_rating', sanitize_text_field($_POST['review_rating']));
+            update_post_meta($post_id, '_review_rating', sanitize_text_field(wp_unslash($_POST['review_rating'])));
         }
 
         if (isset($_POST['reviewer_position'])) {
-            update_post_meta($post_id, '_reviewer_position', sanitize_text_field($_POST['reviewer_position']));
+            update_post_meta($post_id, '_reviewer_position', sanitize_text_field(wp_unslash($_POST['reviewer_position'])));
         }
 
         if (isset($_POST['review_tag'])) {
-            update_post_meta($post_id, '_review_tag', sanitize_text_field($_POST['review_tag']));
+            update_post_meta($post_id, '_review_tag', sanitize_text_field(wp_unslash($_POST['review_tag'])));
         }
 
         $verified = isset($_POST['review_verified']) ? 'yes' : 'no';
@@ -263,7 +267,7 @@ class Homepage_Reviews_CPT
 
         for ($i = 1; $i <= 4; $i++) {
             if (isset($_POST['review_gallery_image_' . $i])) {
-                update_post_meta($post_id, '_review_gallery_image_' . $i, sanitize_text_field($_POST['review_gallery_image_' . $i]));
+                update_post_meta($post_id, '_review_gallery_image_' . $i, absint($_POST['review_gallery_image_' . $i]));
             }
         }
     }

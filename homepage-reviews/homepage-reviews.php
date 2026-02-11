@@ -1,9 +1,17 @@
 <?php
 /**
- * Plugin Name: Homepage Reviews
- * Description: A custom plugin to display reviews on the homepage with a customizable layout.
- * Version: 1.0
- * Author: Your Name
+ * Plugin Name:       Homepage Reviews
+ * Description:       A custom plugin to display reviews on the homepage with a customizable layout.
+ * Version:           1.0.2
+ * Author:            Sornavel Vikas
+ * Author URI:        https://vikaszap.in
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       homepage-reviews
+ * Domain Path:       /languages
+ * Requires at least: 5.6
+ * Requires PHP:      7.4
+ * Tested up to:      6.9
  */
 
 if (!defined('ABSPATH')) {

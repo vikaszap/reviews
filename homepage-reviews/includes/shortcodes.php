@@ -9,19 +9,21 @@ function homepage_reviews_shortcode($atts)
         'limit' => -1,
     ), $atts, 'homepage_reviews');
 
+    $limit = intval($atts['limit']);
+
     // Enqueue styles and scripts
     wp_enqueue_style('homepage-reviews-style', HOMEPAGE_REVIEWS_URL . 'assets/css/style.css', array(), '1.0.0');
     wp_enqueue_script('homepage-reviews-slider', HOMEPAGE_REVIEWS_URL . 'assets/js/slider.js', array('jquery'), '1.0.0', true);
 
     // Get settings
     $options = get_option('homepage_reviews_settings');
-    $card_bg_color = isset($options['card_bg_color']) ? $options['card_bg_color'] : '#ffffff';
-    $text_color = isset($options['text_color']) ? $options['text_color'] : '#333333';
-    $rating_color = isset($options['rating_color']) ? $options['rating_color'] : '#ffb900';
-    $font_size = isset($options['font_size']) ? $options['font_size'] : '16';
-    $border_radius = isset($options['border_radius']) ? $options['border_radius'] : '8';
+    $card_bg_color = isset($options['card_bg_color']) ? sanitize_hex_color($options['card_bg_color']) : '#ffffff';
+    $text_color = isset($options['text_color']) ? sanitize_hex_color($options['text_color']) : '#333333';
+    $rating_color = isset($options['rating_color']) ? sanitize_hex_color($options['rating_color']) : '#ffb900';
+    $font_size = isset($options['font_size']) ? absint($options['font_size']) : '16';
+    $border_radius = isset($options['border_radius']) ? absint($options['border_radius']) : '8';
     $autoplay = isset($options['autoplay']) ? $options['autoplay'] : '0';
-    $autoplay_speed = isset($options['autoplay_speed']) ? intval($options['autoplay_speed']) : 5000;
+    $autoplay_speed = isset($options['autoplay_speed']) ? absint($options['autoplay_speed']) : 5000;
 
     // Pass autoplay config to JS
     wp_localize_script('homepage-reviews-slider', 'homepageReviewsConfig', array(
@@ -32,7 +34,7 @@ function homepage_reviews_shortcode($atts)
     // Query Reviews
     $args = array(
         'post_type' => 'homepage_reviews',
-        'posts_per_page' => $atts['limit'],
+        'posts_per_page' => $limit,
         'post_status' => 'publish',
         'orderby' => 'menu_order',
         'order' => 'ASC',
@@ -112,7 +114,7 @@ function homepage_reviews_shortcode($atts)
         }
 
         $output .= '<div class="reviewer-text">';
-        $output .= '<div class="reviewer-name">' . get_the_title() . '</div>';
+        $output .= '<div class="reviewer-name">' . esc_html(get_the_title()) . '</div>';
         if ($position) {
             $output .= '<div class="reviewer-position">' . esc_html($position) . '</div>';
         }
@@ -137,7 +139,7 @@ function homepage_reviews_shortcode($atts)
         $output .= '</div>';
 
         // Content (with quotation marks like Figma)
-        $output .= '<div class="review-content">&ldquo;' . get_the_content() . '&rdquo;</div>';
+        $output .= '<div class="review-content">&ldquo;' . wp_kses_post(get_the_content()) . '&rdquo;</div>';
 
         // Tag
         if ($tag) {
@@ -168,6 +170,7 @@ function homepage_reviews_shortcode($atts)
         $output .= '<div class="slider-dots">';
         for ($d = 0; $d < $slide_count; $d++) {
             $active_class = ($d === 0) ? ' active' : '';
+            /* translators: %d: Review number */
             $output .= '<span class="slider-dot' . $active_class . '" data-index="' . $d . '" role="button" aria-label="' . sprintf(esc_attr__('Go to review %d', 'homepage-reviews'), $d + 1) . '"></span>';
         }
         $output .= '</div>';

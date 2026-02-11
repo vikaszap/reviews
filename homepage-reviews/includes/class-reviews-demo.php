@@ -54,7 +54,7 @@ class Homepage_Reviews_Demo
             }
         }
 
-        wp_redirect(add_query_arg(array('page' => 'homepage_reviews_settings', 'message' => 'demo_imported'), admin_url('edit.php?post_type=homepage_reviews')));
+        wp_safe_redirect(add_query_arg(array('page' => 'homepage_reviews_settings', 'message' => 'demo_imported'), admin_url('edit.php?post_type=homepage_reviews')));
         exit;
     }
 }

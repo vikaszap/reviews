@@ -15,6 +15,12 @@ function homepage_reviews_shortcode($atts)
 
     // Get settings
     $options = get_option('homepage_reviews_settings');
+
+    // Localize script with autoplay settings
+    wp_localize_script('homepage-reviews-slider', 'homepage_reviews_slider_options', array(
+        'autoplay' => isset($options['autoplay']) ? $options['autoplay'] : '0',
+        'autoplay_speed' => isset($options['autoplay_speed']) ? $options['autoplay_speed'] : '5000',
+    ));
     $card_bg_color = isset($options['card_bg_color']) ? $options['card_bg_color'] : '#ffffff';
     $text_color = isset($options['text_color']) ? $options['text_color'] : '#333333';
     $rating_color = isset($options['rating_color']) ? $options['rating_color'] : '#ffb900';

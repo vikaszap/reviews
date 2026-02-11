@@ -79,6 +79,38 @@ class Homepage_Reviews_Settings
             'homepage_reviews_style_section',
             array('field' => 'border_radius', 'default' => '8')
         );
+
+        add_settings_section(
+            'homepage_reviews_slider_section',
+            __('Slider Settings', 'homepage-reviews'),
+            null,
+            'homepage_reviews_settings'
+        );
+
+        add_settings_field(
+            'autoplay',
+            __('Enable Autoplay', 'homepage-reviews'),
+            array($this, 'checkbox_field_callback'),
+            'homepage_reviews_settings',
+            'homepage_reviews_slider_section',
+            array('field' => 'autoplay', 'default' => '0')
+        );
+
+        add_settings_field(
+            'autoplay_speed',
+            __('Autoplay Speed (ms)', 'homepage-reviews'),
+            array($this, 'number_field_callback'),
+            'homepage_reviews_settings',
+            'homepage_reviews_slider_section',
+            array('field' => 'autoplay_speed', 'default' => '5000')
+        );
+    }
+
+    public function checkbox_field_callback($args)
+    {
+        $options = get_option('homepage_reviews_settings');
+        $value = isset($options[$args['field']]) ? $options[$args['field']] : $args['default'];
+        echo '<input type="checkbox" name="homepage_reviews_settings[' . esc_attr($args['field']) . ']" value="1" ' . checked(1, $value, false) . '>';
     }
 
     public function color_picker_callback($args)

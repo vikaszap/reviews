@@ -16,7 +16,8 @@ jQuery(document).ready(function ($) {
             $dots.eq(currentIndex).addClass('active');
         }
 
-        $slider.find('.slider-next').on('click', function () {
+        $slider.find('.slider-next').on('click', function (e) {
+            e.preventDefault();
             if (currentIndex < slideCount - 1) {
                 currentIndex++;
             } else {
@@ -25,7 +26,8 @@ jQuery(document).ready(function ($) {
             updateSlider();
         });
 
-        $slider.find('.slider-prev').on('click', function () {
+        $slider.find('.slider-prev').on('click', function (e) {
+            e.preventDefault();
             if (currentIndex > 0) {
                 currentIndex--;
             } else {
@@ -35,8 +37,10 @@ jQuery(document).ready(function ($) {
         });
 
         // Click on dots
-        $dots.on('click', function () {
-            currentIndex = $(this).data('index');
+        $dots.on('click', function (e) {
+            e.preventDefault();
+            var index = $(this).attr('data-index');
+            currentIndex = parseInt(index, 10);
             updateSlider();
         });
 

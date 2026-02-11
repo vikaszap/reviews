@@ -33,7 +33,9 @@ class Homepage_Reviews_CPT
                     'nonce' => wp_create_nonce('homepage_reviews_reorder_nonce')
                 ));
 
-                wp_add_inline_style('homepage-reviews-admin', '.column-sort { width: 40px !important; text-align: center; } .drag-handle { cursor: move; color: #ccc; font-size: 20px; } .drag-handle:hover { color: #666; } .ui-sortable-helper { display: table !important; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }');
+                wp_register_style('homepage-reviews-admin-reorder', false);
+                wp_enqueue_style('homepage-reviews-admin-reorder');
+                wp_add_inline_style('homepage-reviews-admin-reorder', '.column-sort { width: 40px !important; text-align: center; } .drag-handle { cursor: move; color: #ccc; font-size: 20px; } .drag-handle:hover { color: #666; } .ui-sortable-helper { display: table !important; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }');
             }
         }
     }

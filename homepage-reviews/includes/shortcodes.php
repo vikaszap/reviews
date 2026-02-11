@@ -26,6 +26,8 @@ function homepage_reviews_shortcode($atts)
         'post_type' => 'homepage_reviews',
         'posts_per_page' => $atts['limit'],
         'post_status' => 'publish',
+        'orderby' => 'menu_order',
+        'order' => 'ASC',
     );
     $query = new WP_Query($args);
 

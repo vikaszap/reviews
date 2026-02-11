@@ -8,6 +8,31 @@ jQuery(document).ready(function ($) {
         var currentIndex = 0;
         var isAnimating = false;
 
+        // Autoplay settings
+        var autoplay = typeof homepage_reviews_slider_options !== 'undefined' && homepage_reviews_slider_options.autoplay === '1';
+        var autoplaySpeed = typeof homepage_reviews_slider_options !== 'undefined' ? parseInt(homepage_reviews_slider_options.autoplay_speed, 10) : 5000;
+        var autoplayTimer;
+
+        function startAutoplay() {
+            if (autoplay && slideCount > 1) {
+                stopAutoplay();
+                autoplayTimer = setInterval(function () {
+                    if (currentIndex < slideCount - 1) {
+                        currentIndex++;
+                    } else {
+                        currentIndex = 0;
+                    }
+                    updateSlider();
+                }, autoplaySpeed);
+            }
+        }
+
+        function stopAutoplay() {
+            if (autoplayTimer) {
+                clearInterval(autoplayTimer);
+            }
+        }
+
         function updateSlider() {
             isAnimating = true;
             var translateX = -(currentIndex * 100);
@@ -28,12 +53,14 @@ jQuery(document).ready(function ($) {
             e.stopImmediatePropagation();
             if (isAnimating) return;
 
+            stopAutoplay();
             if (currentIndex < slideCount - 1) {
                 currentIndex++;
             } else {
                 currentIndex = 0;
             }
             updateSlider();
+            startAutoplay();
         });
 
         $slider.find('.slider-prev').off('click').on('click', function (e) {
@@ -41,12 +68,14 @@ jQuery(document).ready(function ($) {
             e.stopImmediatePropagation();
             if (isAnimating) return;
 
+            stopAutoplay();
             if (currentIndex > 0) {
                 currentIndex--;
             } else {
                 currentIndex = slideCount - 1;
             }
             updateSlider();
+            startAutoplay();
         });
 
         // Click on dots
@@ -55,12 +84,22 @@ jQuery(document).ready(function ($) {
             e.stopImmediatePropagation();
             if (isAnimating) return;
 
+            stopAutoplay();
             var index = $(this).attr('data-index');
             currentIndex = parseInt(index, 10);
             updateSlider();
+            startAutoplay();
+        });
+
+        // Pause on hover
+        $slider.on('mouseenter', function() {
+            stopAutoplay();
+        }).on('mouseleave', function() {
+            startAutoplay();
         });
 
         // Initialize
         updateSlider();
+        startAutoplay();
     });
 });

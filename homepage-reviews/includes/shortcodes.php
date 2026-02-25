@@ -26,6 +26,8 @@ function homepage_reviews_shortcode($atts)
         'post_type' => 'homepage_reviews',
         'posts_per_page' => $atts['limit'],
         'post_status' => 'publish',
+        'orderby' => 'menu_order',
+        'order' => 'ASC',
     );
     $query = new WP_Query($args);
 
@@ -151,17 +153,19 @@ function homepage_reviews_shortcode($atts)
     $output .= '</div>'; // .reviews-track
 
     // Navigation: Prev + Dots + Next
-    $output .= '<div class="slider-nav">';
-    $output .= '<button class="slider-prev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
-    $output .= '<div class="slider-dots">';
     $slide_count = $query->post_count;
-    for ($d = 0; $d < $slide_count; $d++) {
-        $active_class = ($d === 0) ? ' active' : '';
-        $output .= '<span class="slider-dot' . $active_class . '" data-index="' . $d . '"></span>';
+    if ($slide_count > 1) {
+        $output .= '<div class="slider-nav">';
+        $output .= '<button type="button" class="slider-prev" aria-label="' . esc_attr__('Previous review', 'homepage-reviews') . '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+        $output .= '<div class="slider-dots">';
+        for ($d = 0; $d < $slide_count; $d++) {
+            $active_class = ($d === 0) ? ' active' : '';
+            $output .= '<span class="slider-dot' . $active_class . '" data-index="' . $d . '" role="button" aria-label="' . sprintf(esc_attr__('Go to review %d', 'homepage-reviews'), $d + 1) . '"></span>';
+        }
+        $output .= '</div>';
+        $output .= '<button type="button" class="slider-next" aria-label="' . esc_attr__('Next review', 'homepage-reviews') . '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+        $output .= '</div>'; // .slider-nav
     }
-    $output .= '</div>';
-    $output .= '<button class="slider-next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
-    $output .= '</div>'; // .slider-nav
 
     $output .= '</div>'; // .homepage-reviews-slider
 

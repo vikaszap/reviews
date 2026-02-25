@@ -12,14 +12,89 @@ class Homepage_Reviews_CPT
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
         add_action('save_post', array($this, 'save_meta_box_data'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        add_filter('manage_homepage_reviews_posts_columns', array($this, 'add_sort_column'));
+        add_action('manage_homepage_reviews_posts_custom_column', array($this, 'render_sort_column'), 10, 2);
+        add_action('wp_ajax_update_reviews_order', array($this, 'handle_ajax_reorder'));
+        add_action('pre_get_posts', array($this, 'set_admin_order'));
     }
 
     public function enqueue_admin_scripts()
     {
-        global $post_type;
+        global $post_type, $pagenow;
         if ('homepage_reviews' === $post_type) {
             wp_enqueue_media();
             wp_enqueue_script('homepage-reviews-admin', HOMEPAGE_REVIEWS_URL . 'assets/js/admin.js', array('jquery'), '1.0.0', true);
+
+            if ('edit.php' === $pagenow) {
+                wp_enqueue_script('jquery-ui-sortable');
+                wp_enqueue_script('homepage-reviews-reorder', HOMEPAGE_REVIEWS_URL . 'assets/js/admin-reorder.js', array('jquery', 'jquery-ui-sortable'), '1.0.0', true);
+                wp_localize_script('homepage-reviews-reorder', 'homepage_reviews_reorder', array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('homepage_reviews_reorder_nonce')
+                ));
+
+                wp_register_style('homepage-reviews-admin-reorder', false);
+                wp_enqueue_style('homepage-reviews-admin-reorder');
+                wp_add_inline_style('homepage-reviews-admin-reorder', '.column-sort { width: 40px !important; text-align: center; } .drag-handle { cursor: move; color: #ccc; font-size: 20px; } .drag-handle:hover { color: #666; } .ui-sortable-helper { display: table !important; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }');
+            }
+        }
+    }
+
+    public function add_sort_column($columns)
+    {
+        $new_columns = array();
+        foreach ($columns as $key => $value) {
+            if ($key === 'title') {
+                $new_columns['sort'] = '';
+            }
+            $new_columns[$key] = $value;
+        }
+        return $new_columns;
+    }
+
+    public function render_sort_column($column, $post_id)
+    {
+        if ($column === 'sort') {
+            echo '<span class="dashicons dashicons-menu drag-handle"></span>';
+        }
+    }
+
+    public function handle_ajax_reorder()
+    {
+        check_ajax_referer('homepage_reviews_reorder_nonce', 'nonce');
+
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error('Unauthorized');
+        }
+
+        $order = isset($_POST['order']) ? (array) $_POST['order'] : array();
+
+        if (empty($order)) {
+            wp_send_json_error('No order data');
+        }
+
+        foreach ($order as $index => $post_id) {
+            $post_id = intval($post_id);
+            if ($post_id > 0) {
+                wp_update_post(array(
+                    'ID' => $post_id,
+                    'menu_order' => $index
+                ));
+            }
+        }
+
+        wp_send_json_success();
+    }
+
+    public function set_admin_order($query)
+    {
+        if (!is_admin() || !$query->is_main_query()) {
+            return;
+        }
+
+        if ($query->get('post_type') === 'homepage_reviews') {
+            $query->set('orderby', 'menu_order');
+            $query->set('order', 'ASC');
         }
     }
 
@@ -58,7 +133,7 @@ class Homepage_Reviews_CPT
             'label' => __('Review', 'homepage-reviews'),
             'description' => __('Homepage Reviews', 'homepage-reviews'),
             'labels' => $labels,
-            'supports' => array('title', 'editor', 'thumbnail'),
+            'supports' => array('title', 'editor', 'thumbnail', 'page-attributes'),
             'hierarchical' => false,
             'public' => true,
             'show_ui' => true,
